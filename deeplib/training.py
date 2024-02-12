@@ -11,7 +11,7 @@ from deeplib.history import History
 from deeplib.datasets import train_valid_loaders
 
 
-def get_model(network, optimizer=None, criterion=None, use_gpu=True, acc=True):
+def get_model(network, optimizer=None, criterion=None, use_gpu=True, acc=[]):
     """
     Obtient un modèle Poutyne pour un réseau de neurones PyTorch. On suppose que la sortie du réseau est compatible avec
     la fonction cross-entropy de PyTorch pour pouvoir utiliser l'exactitude (accuracy).
@@ -27,13 +27,7 @@ def get_model(network, optimizer=None, criterion=None, use_gpu=True, acc=True):
     if criterion is None:
         criterion = nn.CrossEntropyLoss()
 
-    batch_metrics = []
-    if isinstance(acc, bool):
-        batch_metrics = ['accuracy']
-    elif isinstance(acc, list):
-        batch_metrics = acc
-
-    model = pt.Model(network, optimizer, criterion, batch_metrics=batch_metrics)
+    model = pt.Model(network, optimizer, criterion, batch_metrics=acc)
     if use_gpu:
         if torch.cuda.is_available():
             model.cuda()
@@ -121,7 +115,7 @@ class HistoryCallback(pt.Callback):
         self.history.save(dict(**logs, lr=self.model.optimizer.param_groups[0]['lr']))
 
 
-def train(network, optimizer, dataset, n_epoch, batch_size, *, use_gpu=True, criterion=None, callbacks=None, acc=True):
+def train(network, optimizer, dataset, n_epoch, batch_size, *, use_gpu=True, criterion=None, callbacks=None, acc=['accuracy']):
     """
     Entraîne un réseau de neurones PyTorch avec Poutyne. On suppose que la sortie du réseau est compatible avec
     la fonction cross-entropy de PyTorch pour calculer l'exactitude (accuracy).
@@ -154,7 +148,7 @@ def train(network, optimizer, dataset, n_epoch, batch_size, *, use_gpu=True, cri
     return history_callback.history
 
 
-def test(network, test_dataset, batch_size, *, use_gpu=True, criterion=None, acc=True):
+def test(network, test_dataset, batch_size, *, use_gpu=True, criterion=None, acc=['accuracy']):
     """
     Test un réseau de neurones PyTorch avec Poutyne. On suppose que la sortie du réseau est compatible avec
     la fonction cross-entropy de PyTorch pour calculer l'exactitude (accuracy).
