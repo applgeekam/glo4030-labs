@@ -27,7 +27,12 @@ def get_model(network, optimizer=None, criterion=None, use_gpu=True, acc=True):
     if criterion is None:
         criterion = nn.CrossEntropyLoss()
 
-    batch_metrics = ['accuracy'] if acc else []
+    batch_metrics = []
+    if isinstance(acc, bool):
+        batch_metrics = ['accuracy']
+    elif isinstance(acc, list):
+        batch_metrics = acc
+
     model = pt.Model(network, optimizer, criterion, batch_metrics=batch_metrics)
     if use_gpu:
         if torch.cuda.is_available():
