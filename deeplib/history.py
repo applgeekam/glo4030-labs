@@ -87,3 +87,20 @@ class History:
         ax.xaxis.set_major_locator(MaxNLocator(integer=True))
 
         plt.show()
+
+    def display_binary(self, display_lr=False):
+        """
+        Pour une tache de classification binaire, affiche deux graphiques pour les pertes en entraînement et en validation et pour l'exactitude (accuracy) en
+        entraînement et en validation. De plus, si le taux d'apprentissage a été sauvegardé, il est possible de lui
+        afficher un graphique.
+
+        Args:
+            display_lr (bool): Si on veut afficher un graphique pour le taux d'apprentissage. Par défaut, le graphique
+                n'est pas affiché.
+        """
+
+        self.history['acc'] = self.history['bin_acc']
+        self.history['val_acc'] = self.history['val_bin_acc']
+
+        self.display(display_lr)
+
